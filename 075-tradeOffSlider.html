@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Trade-off sliders</title>
+    <link rel="stylesheet" href="slide-theme-tokens.css">
+    <style>
+        :root {
+            --eff-accent: #334155;
+            --eff-accent-border: #1e293b;
+            --eff-text-title: #334155;
+            --eff-text-body: #64748b;
+            --eff-bg-slide: #ffffff;
+            --eff-track: #e2e8f0;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--page-canvas-bg);
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--eff-bg-slide);
+            padding: 28px 36px 24px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: var(--slide-shadow);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid var(--eff-accent-border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--eff-accent);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .main-title {
+            margin: 20px 0 0;
+            max-width: 100%;
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.45;
+            letter-spacing: 0.01em;
+        }
+
+        .lede {
+            margin: 8px 0 0;
+            font-size: 15px;
+            color: var(--eff-text-body);
+            line-height: 1.55;
+            max-width: 52em;
+        }
+
+        .sliders {
+            margin-top: 22px;
+            display: flex;
+            flex-direction: column;
+            gap: 22px;
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+        }
+
+        .trade-block {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            width: 100%;
+        }
+
+        .trade-label-row {
+            display: flex;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: 16px;
+            width: 100%;
+        }
+
+        .trade-label {
+            margin: 0;
+            font-size: 15px;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.3;
+            max-width: 42%;
+        }
+
+        .trade-label--right {
+            text-align: right;
+        }
+
+        .trade-label-col {
+            display: flex;
+            flex-direction: column;
+            gap: 3px;
+            max-width: 46%;
+        }
+
+        .trade-label-col--right {
+            align-items: flex-end;
+        }
+
+        /* 列レイアウト時は親が幅を制限するため、子の max-width: % が二重に効いて短い語が改行されやすい */
+        .trade-label-col .trade-label {
+            max-width: none;
+            white-space: nowrap;
+        }
+
+        .trade-label-gloss {
+            margin: 0;
+            font-size: 12px;
+            font-weight: var(--font-weight-normal);
+            color: var(--eff-text-body);
+            line-height: 1.35;
+        }
+
+        .trade-label-gloss--right {
+            text-align: right;
+        }
+
+        .trade-track {
+            position: relative;
+            width: 100%;
+            padding: 4px 0 2px;
+        }
+
+        .trade-hint {
+            margin: 0;
+            font-size: 13px;
+            color: var(--eff-text-body);
+            line-height: 1.45;
+            min-height: 1.45em;
+        }
+
+        input[type="range"] {
+            width: 100%;
+            height: 28px;
+            margin: 0;
+            padding: 0;
+            background: transparent;
+            -webkit-appearance: none;
+            appearance: none;
+            cursor: pointer;
+        }
+
+        input[type="range"]:focus {
+            outline: none;
+        }
+
+        input[type="range"]:focus-visible {
+            outline: 2px solid var(--eff-accent);
+            outline-offset: 4px;
+            border-radius: 4px;
+        }
+
+        input[type="range"]::-webkit-slider-runnable-track {
+            height: 8px;
+            border-radius: 999px;
+            background: var(--eff-track);
+        }
+
+        input[type="range"]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 20px;
+            height: 20px;
+            margin-top: -6px;
+            border-radius: 50%;
+            background: var(--eff-accent);
+            border: 2px solid #ffffff;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
+        }
+
+        input[type="range"]::-moz-range-track {
+            height: 8px;
+            border-radius: 999px;
+            background: var(--eff-track);
+        }
+
+        input[type="range"]::-moz-range-thumb {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            background: var(--eff-accent);
+            border: 2px solid #ffffff;
+            box-shadow: 0 1px 4px rgba(15, 23, 42, 0.25);
+        }
+
+        .foot {
+            margin-top: auto;
+            padding-top: 10px;
+            font-size: 12px;
+            color: var(--eff-text-body);
+            line-height: 1.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide" role="document" aria-label="トレードオフをスライダーで示すスライド">
+        <div class="pill">Trade-off sliders</div>
+        <h1 class="main-title">進め方のバランス（トレードオフ）</h1>
+        <p class="lede">テーマを多くの人に届けるには、トレードオフごとに優先順位を決めて意思決定の軸とする。</p>
+
+        <div class="sliders">
+            <div class="trade-block">
+                <div class="trade-label-row">
+                    <div class="trade-label-col">
+                        <p class="trade-label" id="t1-left">瞬間的な感動</p>
+                    </div>
+                    <div class="trade-label-col trade-label-col--right">
+                        <p class="trade-label trade-label--right" id="t1-right">文脈とテーマ性の保全</p>
+                    </div>
+                </div>
+                <div class="trade-track">
+                    <input type="range" min="0" max="8" step="1" value="5" aria-labelledby="t1-left t1-right" data-pole-left="瞬間的な感動" data-pole-right="文脈とテーマ性の保全" data-hint-0="視線が止まる見せ方を最優先。説明・ストーリーは短く確認し、インパクトを先に試す。" data-hint-1="写真・コピー・レイアウトの訴求から決める。テーマとの整合は週次で整える。" data-hint-2="訴求を先行しつつ、週1でテーマからのズレを点検する。" data-hint-3="やや感動寄り。最初の見せ方を先に固め、文脈は後から足す。" data-hint-4="中間：訴求と文脈の両方を企画メモに照らし、週次で優先を更新する。" data-hint-5="やや文脈寄り。メッセージの軸を先に置き、入口の強い一画面は残す。" data-hint-6="文脈・テーマを優先。訴求はパネル・導線など置き場所を決めて配置する。" data-hint-7="メッセージの一貫性を重視。装飾は補助にし、読み違いを減らす。" data-hint-8="テーマ・文脈を最優先。装飾は最小限にし、展示全体の筋をそろえる。">
+                </div>
+                <p class="trade-hint" data-role="hint" aria-live="polite"></p>
+            </div>
+
+            <div class="trade-block">
+                <div class="trade-label-row">
+                    <p class="trade-label" id="t2-left">作品完成度</p>
+                    <p class="trade-label trade-label--right" id="t2-right">接触機会</p>
+                </div>
+                <div class="trade-track">
+                    <input type="range" min="0" max="8" step="1" value="7" aria-labelledby="t2-left t2-right" data-pole-left="作品完成度" data-pole-right="接触機会" data-hint-0="仕上げと統一感を最重視。接触はクローズドレビュー中心に絞る。" data-hint-1="磨き込みに厚い工数。外部向け告知は週末まとめなどに限定。" data-hint-2="品質優先＋告知は小出しで接触を少しずつ増やす。" data-hint-3="やや完成度。本番品質に寄せ、告知は計画どおり進める。" data-hint-4="中間：完成度と来場・告知・参加のしやすさを週次で見直し、締切に合わせて更新。" data-hint-5="やや接触機会。届く回数を増やし、完成度は「十分ライン」を先に固定して守る。" data-hint-6="接触を厚く。完成度はチェックリストでラインを守る。" data-hint-7="告知・参加を最大化。完成度はライン厳守、追加磨きは最小。" data-hint-8="届くことを最重視。完成度は最低限のラインのみ。">
+                </div>
+                <p class="trade-hint" data-role="hint" aria-live="polite"></p>
+            </div>
+
+            <div class="trade-block">
+                <div class="trade-label-row">
+                    <p class="trade-label" id="t3-left">完了性</p>
+                    <p class="trade-label trade-label--right" id="t3-right">完璧性</p>
+                </div>
+                <div class="trade-track">
+                    <input type="range" min="0" max="8" step="1" value="2" aria-labelledby="t3-left t3-right" data-pole-left="完了性" data-pole-right="完璧性" data-hint-0="期限内提出を最重視。粗さは許容し、未完は次版で拾う。" data-hint-1="提出できる状態を優先。後回しにする項目はリストに書き出す。" data-hint-2="期限優先。重要部だけ最低限の品質で先に形にする。" data-hint-3="やや完了性。スケジュールを崩さず、改善は次の区切りへ回す。" data-hint-4="中間：重要箇所は仕上げ、その他は完了で全体を進める。" data-hint-5="やや完璧性。重要箇所から丁寧に、他はスケジュールに沿う。" data-hint-6="推敲・検証を厚く。周辺は後回し可とタスクで明示する。" data-hint-7="重要部分から品質を上げる。締切候補日を先にカレンダーへ入れる。" data-hint-8="推敲・検証を最重視。提出締切を固定し、その範囲で詰める。">
+                </div>
+                <p class="trade-hint" data-role="hint" aria-live="polite"></p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function () {
+            function stepAria(step, leftName, rightName) {
+                var max = 8;
+                var s = Math.max(0, Math.min(max, Number(step)));
+                var n = s + 1;
+                var labels = [
+                    "最も「" + leftName + "」寄り",
+                    "かなり「" + leftName + "」寄り",
+                    "「" + leftName + "」寄り",
+                    "やや「" + leftName + "」寄り",
+                    "中間",
+                    "やや「" + rightName + "」寄り",
+                    "「" + rightName + "」寄り",
+                    "かなり「" + rightName + "」寄り",
+                    "最も「" + rightName + "」寄り"
+                ];
+                return "9段階のうち" + n + "、" + labels[s];
+            }
+
+            function wire(block) {
+                var input = block.querySelector('input[type="range"]');
+                var hint = block.querySelector('[data-role="hint"]');
+                if (!input || !hint) return;
+
+                function sync() {
+                    var v = Number(input.value);
+                    var key = "data-hint-" + v;
+                    hint.textContent = input.getAttribute(key) || "";
+                    var leftName = input.getAttribute("data-pole-left") || "左";
+                    var rightName = input.getAttribute("data-pole-right") || "右";
+                    input.setAttribute("aria-valuetext", stepAria(v, leftName, rightName));
+                }
+
+                input.addEventListener("input", sync);
+                input.addEventListener("change", sync);
+                sync();
+            }
+
+            document.querySelectorAll(".trade-block").forEach(wire);
+        })();
+    </script>
+</body>
+</html>

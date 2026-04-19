@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Solution</title>
+    <link rel="stylesheet" href="slide-theme-tokens.css">
+    <style>
+        :root {
+            --eff-accent: #334155;
+            --eff-accent-border: #1e293b;
+            --eff-text-title: #334155;
+            --eff-text-body: #64748b;
+            --eff-bg-slide: #ffffff;
+            --frame-wood: #d4c4a8;
+            --frame-wood-inner: #f5f0e6;
+            --plaque-title: 15px;
+            --plaque-body: 12px;
+            --plaque-notes: 12px;
+            --ai-notice: 10px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--page-canvas-bg);
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--eff-bg-slide);
+            padding: 24px 32px 28px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: var(--slide-shadow);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid var(--eff-accent-border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--eff-accent);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .hero {
+            margin-top: 18px;
+            flex: 1;
+            width: 100%;
+            min-height: 0;
+            display: flex;
+            flex-direction: row;
+            align-items: stretch;
+            gap: 20px;
+        }
+
+        .media {
+            flex: 1 1 auto;
+            min-width: 0;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .media-figure {
+            flex: 1 1 auto;
+            min-height: 0;
+            min-width: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .media-figure .frame {
+            flex: 1 1 auto;
+            min-height: 0;
+            height: auto;
+        }
+
+        .media-figure .frame-inner {
+            min-height: 0;
+        }
+
+        .ai-notice {
+            flex-shrink: 0;
+            margin: 0;
+            padding: 0 2px;
+            font-size: var(--ai-notice);
+            font-weight: var(--font-weight-semibold);
+            line-height: 1.45;
+            letter-spacing: 0.02em;
+            color: var(--eff-text-body);
+            text-align: center;
+        }
+
+        .frame {
+            width: 100%;
+            height: 100%;
+            max-height: 100%;
+            padding: 5px;
+            border-radius: 2px;
+            background: linear-gradient(145deg, #e8dcc8 0%, var(--frame-wood) 45%, #c9b896 100%);
+            box-shadow:
+                inset 0 1px 0 rgba(255, 255, 255, 0.35),
+                0 4px 14px rgba(15, 23, 42, 0.12);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .frame-inner {
+            width: 100%;
+            height: 100%;
+            min-height: 0;
+            background: var(--frame-wood-inner);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
+        }
+
+        .hero-photo {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            object-position: center;
+            display: block;
+        }
+
+        .plaque {
+            flex: 0 0 268px;
+            width: 268px;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 14px;
+            padding: 4px 2px 0 6px;
+            border-left: 1px solid var(--color-border);
+        }
+
+        .plaque-narrative {
+            flex: 0 1 auto;
+            min-height: 0;
+        }
+
+        .plaque-title {
+            margin: 0 0 8px;
+            font-size: var(--plaque-title);
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.45;
+            letter-spacing: 0.02em;
+        }
+
+        .plaque-body {
+            margin: 0;
+            font-size: var(--plaque-body);
+            font-weight: var(--font-weight-normal);
+            color: var(--eff-text-body);
+            line-height: 1.55;
+        }
+
+        .plaque-notes {
+            margin-top: auto;
+            padding-top: 12px;
+            border-top: 1px solid var(--color-border);
+            flex-shrink: 0;
+            min-height: 0;
+        }
+
+        .notes-title {
+            margin: 0 0 10px;
+            font-size: 12px;
+            font-weight: var(--font-weight-bold);
+            letter-spacing: 0.04em;
+            color: var(--eff-text-title);
+        }
+
+        .notes-list {
+            margin: 0;
+            padding: 0;
+            list-style: none;
+            counter-reset: note-idx;
+        }
+
+        .notes-list li {
+            position: relative;
+            margin: 0 0 8px;
+            padding-left: 1.65em;
+            font-size: var(--plaque-notes);
+            font-weight: var(--font-weight-normal);
+            color: var(--eff-text-body);
+            line-height: 1.5;
+            counter-increment: note-idx;
+        }
+
+        .notes-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .notes-list li::before {
+            content: counter(note-idx) "．";
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 1.5em;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+        }
+    </style>
+</head>
+<body>
+    <div class="slide" role="document" aria-label="プロダクトボックス 展示イメージ">
+        <div class="pill">Solution</div>
+
+        <div class="hero">
+            <div class="media">
+                <figure class="media-figure" aria-label="展示イメージ">
+                    <div class="frame">
+                        <div class="frame-inner">
+                            <img
+                                class="hero-photo"
+                                src="img/sony-store-gallery.pdf"
+                                width="6240"
+                                height="4160"
+                                alt="展示イメージ"
+                                decoding="async"
+                                fetchpriority="high"
+                            >
+                        </div>
+                    </div>
+                    <figcaption class="ai-notice">
+                        ※ 展示位置の融通はある程度できる想定です。
+                    </figcaption>
+                </figure>
+            </div>
+
+            <aside class="plaque" aria-label="会場説明と展示制作の注意点">
+                <div class="plaque-narrative">
+                    <h2 class="plaque-title">会場図面を確認する</h2>
+                    <p class="plaque-body">
+                        A, D, E, F, G 面に、作品を展示することができます。壁面の展示可能スペースの寸法は、図面の赤字部分で確認してください。D, E, F, G 面の島は、動かすことも可能です。また、昨年は行いませんでしたが、今年は展示企画の注目を集めるために、トークイベントをB, Cが位置する、格子状のスペースで行う予定です。
+                    </p>
+                </div>
+
+                <section class="plaque-notes" aria-labelledby="notes-heading">
+                    <h3 class="notes-title" id="notes-heading">昨年の展示情報</h3>
+                    <ol class="notes-list">
+                        <li>A, D, E, F, G 面に合計で１５枚のA3サイズの写真を展示しました。</li>
+                        <li>制作の様子をまとめたムービーを作成し、A, Bの間で、40型程度の画面モニターを使用して、常時流していました。</li>
+                        <li>スポンジ上の写真パネル裏面に、シールでマグネットを貼り、それを壁にくっつける方法で展示を行いました。</li>
+                    </ol>
+                </section>
+            </aside>
+        </div>
+    </div>
+</body>
+</html>

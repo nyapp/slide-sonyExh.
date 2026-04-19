@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Why are we Here?</title>
+    <link rel="stylesheet" href="slide-theme-tokens.css">
+    <style>
+        :root {
+            --eff-accent: #334155;
+            --eff-accent-border: #1e293b;
+            --eff-text-title: #334155;
+            --eff-text-body: #64748b;
+            --eff-bg-slide: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--page-canvas-bg);
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--eff-bg-slide);
+            padding: 28px 36px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: var(--slide-shadow);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid var(--eff-accent-border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--eff-accent);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .main-title {
+            margin: 28px 0 0;
+            max-width: 100%;
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.45;
+            letter-spacing: 0.01em;
+        }
+
+        .sections {
+            margin-top: 44px;
+            display: flex;
+            flex-direction: column;
+            gap: 40px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .section-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 14px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .section-num {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--eff-accent);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: var(--font-weight-bold);
+            line-height: 1;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.35;
+        }
+
+        .section-list {
+            margin: 0;
+            padding: 0 0 0 50px;
+            list-style: none;
+        }
+
+        .section-list li {
+            position: relative;
+            margin: 0 0 10px;
+            padding-left: 1em;
+            font-size: 15px;
+            font-weight: var(--font-weight-normal);
+            color: var(--eff-text-body);
+            line-height: 1.65;
+        }
+
+        .section-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-list li::before {
+            content: "・";
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide" role="document" aria-label="業務効率改善プロジェクト スライド">
+        <div class="pill">Why are we Here?</div>
+        <h1 class="main-title">新しいブライダルをテーマとした写真展示会</h1>
+        <div class="sections">
+            <section class="section-block" aria-labelledby="sec-1">
+                <div class="section-head">
+                    <span class="section-num" aria-hidden="true">1</span>
+                    <h2 class="section-title" id="sec-1">新しいブライダル価値の提案</h2>
+                </div>
+                <ul class="section-list">
+                    <li>ターゲットの若年層と同世代の、学生ならではの視点から「ブライダル」を再定義し、新しい価値を提案する。</li>
+                    <li>企画、制作、展示を通して、顧客に価値を届ける体験を網羅的に学習する。</li>
+                </ul>
+            </section>
+            <section class="section-block" aria-labelledby="sec-2">
+                <div class="section-head">
+                    <span class="section-num" aria-hidden="true">2</span>
+                    <h2 class="section-title" id="sec-2">若年層を対象としたソニーストア銀座の認知向上</h2>
+                </div>
+                <ul class="section-list">
+                    <li>展示・トーク・ワークショップなど参加型の企画で、来店のきっかけを「見る」から「体験する」に広げる。</li>
+                    <li>SNSで共有されやすいビジュアルとストーリー設計により、銀座旗艦店の存在と世界観を若年層に自然に届ける。</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

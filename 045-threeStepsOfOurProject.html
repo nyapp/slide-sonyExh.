@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Three Steps of Our Project</title>
+    <link rel="stylesheet" href="slide-theme-tokens.css">
+    <style>
+        :root {
+            --eff-accent: #334155;
+            --eff-accent-border: #1e293b;
+            --eff-text-title: #334155;
+            --eff-text-body: #64748b;
+            --eff-bg-slide: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--page-canvas-bg);
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--eff-bg-slide);
+            position: relative;
+            padding: 28px 36px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: var(--slide-shadow);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid var(--eff-accent-border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--eff-accent);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .steps-row {
+            flex: 1;
+            width: 100%;
+            display: flex;
+            align-items: stretch;
+            justify-content: center;
+            gap: 0;
+            min-height: 0;
+            margin-top: 64px;
+        }
+
+        .step-card {
+            flex: 1;
+            max-width: 260px;
+            position: relative;
+            background: #ffffff;
+            border: 3px solid var(--eff-accent);
+            border-radius: 16px;
+            padding: 52px 18px 22px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+        }
+
+        .step-badge {
+            position: absolute;
+            top: 0;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 64px;
+            height: 64px;
+            border-radius: 50%;
+            background: var(--eff-accent);
+            color: #ffffff;
+            font-size: var(--fs-steps-badge);
+            font-weight: var(--font-weight-bold);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            line-height: 1;
+        }
+
+        .step-illust {
+            width: 210px;
+            height: 160px;
+            margin: 0 0 14px;
+            padding: 0;
+            flex-shrink: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border-radius: 10px;
+            color: var(--eff-accent);
+        }
+
+        .step-photo {
+            width: 100%;
+            height: 100%;
+            border-radius: 10px;
+            object-fit: cover;
+            display: block;
+        }
+
+        .step-heading {
+            margin: 0 0 10px;
+            font-size: var(--fs-steps-heading);
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.35;
+        }
+
+        .step-desc {
+            margin: 0;
+            font-size: var(--fs-steps-desc);
+            font-weight: var(--font-weight-normal);
+            color: var(--eff-text-body);
+            line-height: 1.65;
+        }
+
+        .step-arrow {
+            flex: 0 0 auto;
+            align-self: center;
+            width: 0;
+            height: 0;
+            margin: 0 6px;
+            border-top: 10px solid transparent;
+            border-bottom: 10px solid transparent;
+            border-left: 14px solid var(--eff-accent);
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide" role="document" aria-labelledby="slideTitle">
+    <div class="pill" id="slideTitle">Three Steps of Our Project</div>
+
+    <div class="steps-row" role="list">
+        <article class="step-card" role="listitem">
+            <span class="step-badge" aria-hidden="true">1</span>
+            <figure class="step-illust" aria-label="企画検討のための商品撮影イメージ" title="企画検討イメージ">
+                <img
+                    class="step-photo"
+                    src="img/tenji-00.png"
+                    alt="商品撮影の企画検討イメージ"
+                    loading="lazy"
+                    decoding="async"
+                    referrerpolicy="no-referrer"
+                    onerror="this.onerror=null;this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 210 160%22%3E%3Crect width=%22210%22 height=%22160%22 fill=%22%23f8fafc%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2212%22 fill=%22%23666%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EImage unavailable%3C/text%3E%3C/svg%3E';"
+                />
+            </figure>
+            <h2 class="step-heading">企画立案</h2>
+            <p class="step-desc">ターゲット像と訴求軸を整理し、ブランド価値が伝わる撮影企画を具体化します。</p>
+        </article>
+
+        <span class="step-arrow" aria-hidden="true"></span>
+
+        <article class="step-card" role="listitem">
+            <span class="step-badge" aria-hidden="true">2</span>
+            <figure class="step-illust" aria-label="楽天RMS 商品撮影イメージ" title="楽天RMS 商品撮影イメージ">
+                <img
+                    class="step-photo"
+                    src="img//tenji-01.png"
+                    alt="プロの写真撮影スタジオで商品を撮影する現場"
+                    loading="lazy"
+                    decoding="async"
+                    referrerpolicy="no-referrer"
+                    onerror="this.onerror=null;this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 210 160%22%3E%3Crect width=%22210%22 height=%22160%22 fill=%22%23f8fafc%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2212%22 fill=%22%23666%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EImage unavailable%3C/text%3E%3C/svg%3E';"
+                />
+            </figure>
+            <h2 class="step-heading">作品制作</h2>
+            <p class="step-desc">企画意図に沿って撮影とレタッチを行い、商品の魅力を最大化する表現へ仕上げます。</p>
+        </article>
+
+        <span class="step-arrow" aria-hidden="true"></span>
+
+        <article class="step-card" role="listitem">
+            <span class="step-badge" aria-hidden="true">3</span>
+            <figure class="step-illust" aria-label="展示用の商品ビジュアルイメージ" title="展示イメージ">
+                <img
+                    class="step-photo"
+                    src="img/tenji-02.png"
+                    alt="展示用に仕上げた商品ビジュアルのイメージ"
+                    loading="lazy"
+                    decoding="async"
+                    referrerpolicy="no-referrer"
+                    onerror="this.onerror=null;this.src='data:image/svg+xml;charset=UTF-8,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 210 160%22%3E%3Crect width=%22210%22 height=%22160%22 fill=%22%23f8fafc%22/%3E%3Ctext x=%2250%25%22 y=%2250%25%22 font-size=%2212%22 fill=%22%23666%22 text-anchor=%22middle%22 dominant-baseline=%22middle%22%3EImage unavailable%3C/text%3E%3C/svg%3E';"
+                />
+            </figure>
+            <h2 class="step-heading">作品展示</h2>
+            <p class="step-desc">完成画像を媒体別に最適化して展開し、効果検証を通じて次回施策へ反映します。</p>
+        </article>
+    </div>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Slide Deck</title>
+    <style>
+        * {
+            box-sizing: border-box;
+        }
+
+        html, body {
+            margin: 0;
+            height: 100%;
+            overflow: hidden;
+            background: #0f172a;
+            color: rgba(255, 255, 255, 0.88);
+            font-family: system-ui, -apple-system, "Segoe UI", "Helvetica Neue", sans-serif;
+        }
+
+        .stage {
+            width: 100vw;
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 12px;
+        }
+
+        .frame-wrap {
+            width: 960px;
+            height: 540px;
+            position: relative;
+            transform-origin: center center;
+            box-shadow: 0 12px 48px rgba(0, 0, 0, 0.45);
+            border-radius: 4px;
+            overflow: hidden;
+            background: #020617;
+        }
+
+        .frame-wrap iframe {
+            display: block;
+            width: 960px;
+            height: 540px;
+            border: 0;
+            background: #fff;
+            /* クリックで子 document にフォーカスが移り親のキー操作が効かなくなるのを防ぐ */
+            pointer-events: none;
+        }
+
+        .hud {
+            position: fixed;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            padding: 10px 16px 14px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 12px;
+            font-size: 13px;
+            letter-spacing: 0.02em;
+            background: linear-gradient(to top, rgba(0, 0, 0, 0.55), transparent);
+            pointer-events: none;
+            user-select: none;
+        }
+
+        .hud kbd {
+            display: inline-block;
+            padding: 2px 6px;
+            margin: 0 1px;
+            border-radius: 4px;
+            border: 1px solid rgba(255, 255, 255, 0.25);
+            font-size: 11px;
+            font-family: inherit;
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .hud-muted {
+            color: rgba(255, 255, 255, 0.55);
+            font-size: 12px;
+        }
+
+        .error-banner {
+            position: fixed;
+            top: 12px;
+            left: 50%;
+            transform: translateX(-50%);
+            max-width: min(560px, calc(100vw - 24px));
+            padding: 10px 14px;
+            border-radius: 8px;
+            background: rgba(180, 40, 40, 0.92);
+            color: #fff;
+            font-size: 13px;
+            line-height: 1.45;
+            display: none;
+            z-index: 10;
+        }
+
+        .error-banner.is-visible {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div id="error" class="error-banner" role="status" aria-live="polite"></div>
+    <div class="stage">
+        <div id="frameWrap" class="frame-wrap">
+            <iframe id="deckFrame" title="現在のスライド" src="about:blank"></iframe>
+        </div>
+    </div>
+    <div class="hud" aria-hidden="true">
+        <span id="counter">— / —</span>
+        <span class="hud-muted"><kbd>→</kbd> <kbd>Space</kbd> 次 · <kbd>←</kbd> 前 · <kbd>Home</kbd> 先頭 · <kbd>End</kbd> 末尾 · <kbd>F</kbd> 全画面</span>
+    </div>
+
+    <!-- SLIDE_DECK_URLS:BEGIN -->
+    <script>
+    window.__SLIDE_DECK_URLS__ = [
+        "000-title.html",
+        "010-whyAreWeHere.html",
+        "020-elevatorPitch.html",
+        "030-productBox.html",
+        "040-solution.html",
+        "045-threeStepsOfOurProject.html",
+        "050-projectCommunity.html",
+        "070-whatKeepsUsSleepless.html",
+        "075-tradeOffSlider.html",
+        "080-theATeam.html",
+        "090-howBigIsThisThing.html",
+    ];
+    </script>
+    <!-- SLIDE_DECK_URLS:END -->
+    <script>
+        (function () {
+            const SLIDE_W = 960;
+            const SLIDE_H = 540;
+            const urls = Array.isArray(window.__SLIDE_DECK_URLS__) ? window.__SLIDE_DECK_URLS__ : [];
+            const frame = document.getElementById("deckFrame");
+            const frameWrap = document.getElementById("frameWrap");
+            const counter = document.getElementById("counter");
+            const errorEl = document.getElementById("error");
+
+            let index = 0;
+
+            function showError(msg) {
+                errorEl.textContent = msg;
+                errorEl.classList.add("is-visible");
+            }
+
+            if (urls.length === 0) {
+                showError("スライド一覧が空です。三桁プレフィックスの .html を追加するか、python3 sync-slide-deck.py で index.html を同期してください。");
+                counter.textContent = "0 / 0";
+                return;
+            }
+
+            function applyScale() {
+                const padX = 16;
+                const padTop = 12;
+                /* 下部 HUD（枚数・ショートカット）とスライドが重ならないよう確保 */
+                const padBottom = 52;
+                const sx = (window.innerWidth - padX * 2) / SLIDE_W;
+                const sy = (window.innerHeight - padTop - padBottom) / SLIDE_H;
+                /* 以前は Math.min(1, …) で「拡大しない」上限があり、大画面では常に余白が出ていた */
+                const s = Math.min(sx, sy);
+                frameWrap.style.transform = "scale(" + s + ")";
+            }
+
+            function updateCounter() {
+                counter.textContent = index + 1 + " / " + urls.length;
+            }
+
+            function go(i) {
+                index = Math.max(0, Math.min(urls.length - 1, i));
+                frame.src = urls[index];
+                updateCounter();
+            }
+
+            function next() {
+                if (index < urls.length - 1) go(index + 1);
+            }
+
+            function prev() {
+                if (index > 0) go(index - 1);
+            }
+
+            window.addEventListener("resize", applyScale);
+            applyScale();
+
+            document.addEventListener("keydown", function (e) {
+                if (e.target && (e.target.tagName === "INPUT" || e.target.tagName === "TEXTAREA" || e.target.isContentEditable)) {
+                    return;
+                }
+                switch (e.key) {
+                    case "ArrowRight":
+                    case "ArrowDown":
+                    case "PageDown":
+                        e.preventDefault();
+                        next();
+                        break;
+                    case " ":
+                        e.preventDefault();
+                        next();
+                        break;
+                    case "ArrowLeft":
+                    case "ArrowUp":
+                    case "PageUp":
+                        e.preventDefault();
+                        prev();
+                        break;
+                    case "Home":
+                        e.preventDefault();
+                        go(0);
+                        break;
+                    case "End":
+                        e.preventDefault();
+                        go(urls.length - 1);
+                        break;
+                    case "f":
+                    case "F":
+                        e.preventDefault();
+                        if (!document.fullscreenElement) {
+                            document.documentElement.requestFullscreen().catch(function () {});
+                        } else {
+                            document.exitFullscreen().catch(function () {});
+                        }
+                        break;
+                    default:
+                        break;
+                }
+            });
+
+            go(0);
+        })();
+    </script>
+</body>
+</html>

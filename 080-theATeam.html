@@ -1,0 +1,205 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>The A-Team</title>
+    <link rel="stylesheet" href="slide-theme-tokens.css">
+    <style>
+        :root {
+            --eff-accent: #334155;
+            --eff-accent-border: #1e293b;
+            --eff-text-title: #334155;
+            --eff-text-body: #64748b;
+            --eff-bg-slide: #ffffff;
+            --eff-table-border: #e2e8f0;
+            --eff-table-head-bg: #f8fafc;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--page-canvas-bg);
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--eff-bg-slide);
+            padding: 28px 36px 26px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: var(--slide-shadow);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid var(--eff-accent-border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--eff-accent);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .main-title {
+            margin: 20px 0 0;
+            max-width: 100%;
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.45;
+            letter-spacing: 0.01em;
+        }
+
+        .lede {
+            margin: 8px 0 0;
+            font-size: 15px;
+            color: var(--eff-text-body);
+            line-height: 1.55;
+            max-width: 54em;
+        }
+
+        .lede strong {
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+        }
+
+        .table-wrap {
+            margin-top: 18px;
+            width: 100%;
+            flex: 1;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        table.roster {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 14px;
+            table-layout: fixed;
+        }
+
+        table.roster th,
+        table.roster td {
+            border: 1px solid var(--eff-table-border);
+            padding: 10px 12px;
+            vertical-align: top;
+            line-height: 1.45;
+            word-break: break-word;
+        }
+
+        table.roster thead th {
+            background: var(--eff-table-head-bg);
+            color: var(--eff-text-title);
+            font-weight: var(--font-weight-bold);
+            text-align: left;
+        }
+
+        table.roster tbody tr {
+            height: 41px;
+        }
+
+        table.roster tbody td {
+            color: var(--eff-text-body);
+            font-weight: var(--font-weight-normal);
+            height: 41px;
+            vertical-align: middle;
+        }
+
+        table.roster col.col-name {
+            width: 22%;
+        }
+
+        table.roster col.col-role {
+            width: 38%;
+        }
+
+        table.roster col.col-heat {
+            width: 40%;
+        }
+
+        .hint {
+            margin: 10px 0 0;
+            font-size: 12px;
+            color: var(--eff-text-body);
+            line-height: 1.5;
+            max-width: 54em;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide" role="document" aria-label="The A-Team 我々のチーム">
+        <div class="pill">The A-Team</div>
+        <h1 class="main-title">我々のチーム</h1>
+        <p class="lede">
+            プロジェクトを成功させるために、<strong>誰が</strong>、<strong>どのような役割で</strong>、<strong>何をするかを</strong>、定めて、この場で揃える。
+        </p>
+        <div class="table-wrap">
+            <table class="roster" aria-label="チーム役割とコミットメント">
+                <colgroup>
+                    <col class="col-name">
+                    <col class="col-role">
+                    <col class="col-heat">
+                </colgroup>
+                <thead>
+                    <tr>
+                        <th scope="col">Member</th>
+                        <th scope="col">Role</th>
+                        <th scope="col">Commitment</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td></td>
+                        <td></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+        <p class="hint">
+            ヒント：名前だけでなく「いつまでに何を返すか」「会議に必ず出るか」まで書くと、後工程の認識ズレが減ります。
+        </p>
+    </div>
+</body>
+</html>

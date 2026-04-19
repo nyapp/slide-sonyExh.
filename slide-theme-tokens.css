@@ -1,0 +1,53 @@
+/**
+ * スライド共通デザイントークン
+ * - 全体のフォント・寸法・アクセントの「デフォルト」はここだけ編集
+ * - スライドごとに色だけ変えたい場合は、各 HTML の <style> 先頭で :root { --color-accent: ... } などを上書き
+ */
+
+@import url("https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;700&display=swap");
+
+:root {
+    /* --- レイアウト（16:9 スライド枠） --- */
+    --slide-width: 960px;
+    --slide-height: 540px;
+    --slide-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    --page-canvas-bg: #cccccc;
+
+    /* --- タイポグラフィ --- */
+    --font-sans: "Noto Sans JP", "Helvetica Neue", Arial, "Hiragino Kaku Gothic ProN",
+        "Hiragino Sans", Meiryo, sans-serif;
+    --font-weight-normal: 400;
+    --font-weight-semibold: 600;
+    --font-weight-bold: 700;
+    --font-weight-extrabold: 800;
+
+    /* index（カード型ジェネレータ） */
+    --fs-index-slide-title: 28px;
+    --fs-index-card-title: 18px;
+    --fs-index-card-body: 15px;
+
+    /* 3ステップ */
+    --fs-steps-slide-title: 26px;
+    --fs-steps-heading: 17px;
+    --fs-steps-desc: 13px;
+    --fs-steps-badge: 32px;
+
+    /* Before / After */
+    --fs-ba-header: 22px;
+    --fs-ba-headline: 26px;
+    --fs-ba-pct: 44px;
+    --fs-ba-box-title: 28px;
+    --fs-ba-sub: 15px;
+    --fs-ba-list: 14px;
+
+    /* --- カラー（010-whyAreWeHere.html と同一のスレート系） --- */
+    --color-accent: #334155;
+    --color-text: #334155;
+    --color-text-muted: #64748b;
+    --color-bg: #f8fafc;
+    --color-bg-slide: #ffffff;
+    --color-card: #ffffff;
+    --color-bg-subtle: #f8fafc;
+    --color-border: #e2e8f0;
+    --color-on-dark: #ffffff;
+}

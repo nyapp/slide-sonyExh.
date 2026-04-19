@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>What keeps us sleepless?</title>
+    <link rel="stylesheet" href="slide-theme-tokens.css">
+    <style>
+        :root {
+            --eff-accent: #334155;
+            --eff-accent-border: #1e293b;
+            --eff-text-title: #334155;
+            --eff-text-body: #64748b;
+            --eff-bg-slide: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--page-canvas-bg);
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--eff-bg-slide);
+            padding: 28px 36px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: var(--slide-shadow);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid var(--eff-accent-border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--eff-accent);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .main-title {
+            margin: 28px 0 0;
+            max-width: 100%;
+            font-size: 28px;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.45;
+            letter-spacing: 0.01em;
+        }
+
+        .sections {
+            margin-top: 36px;
+            display: flex;
+            flex-direction: column;
+            gap: 26px;
+            flex: 1;
+            min-height: 0;
+        }
+
+        .section-block {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: 10px;
+        }
+
+        .section-head {
+            display: flex;
+            align-items: center;
+            gap: 14px;
+        }
+
+        .section-num {
+            flex-shrink: 0;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--eff-accent);
+            color: #ffffff;
+            font-size: 18px;
+            font-weight: var(--font-weight-bold);
+            line-height: 1;
+        }
+
+        .section-title {
+            margin: 0;
+            font-size: 18px;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.35;
+        }
+
+        .section-list {
+            margin: 0;
+            padding: 0 0 0 50px;
+            list-style: none;
+        }
+
+        .section-list li {
+            position: relative;
+            margin: 0 0 6px;
+            padding-left: 1em;
+            font-size: 15px;
+            font-weight: var(--font-weight-normal);
+            color: var(--eff-text-body);
+            line-height: 1.65;
+        }
+
+        .section-list li:last-child {
+            margin-bottom: 0;
+        }
+
+        .section-list li::before {
+            content: "・";
+            position: absolute;
+            left: 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="slide" role="document" aria-label="学生チームのリスクと注意点のスライド">
+        <div class="pill">What keeps us sleepless?</div>
+        <h1 class="main-title">起きやすい問題と注意点</h1>
+        <div class="sections">
+            <section class="section-block" aria-labelledby="sec-1">
+                <div class="section-head">
+                    <span class="section-num" aria-hidden="true">1</span>
+                    <h2 class="section-title" id="sec-1">初見の工程で計画が崩れやすい</h2>
+                </div>
+                <ul class="section-list">
+                    <li>起きやすいこと：未経験で「やってみないと分からない」工程の見積もりが甘く、締切直前に連鎖遅延しやすい。</li>
+                    <li>注意：計画を週次で見直し、メンターへ「遅れそう」を早めに出せるルールとバッファを先に決める。</li>
+                </ul>
+            </section>
+            <section class="section-block" aria-labelledby="sec-2">
+                <div class="section-head">
+                    <span class="section-num" aria-hidden="true">2</span>
+                    <h2 class="section-title" id="sec-2">チームメンバー間の作業負担の偏り</h2>
+                </div>
+                <ul class="section-list">
+                    <li>起きやすいこと：得意・不得意や「頼みやすさ」でタスクが集中し、一部だけ締切前に過負荷、他は関与が薄くなる。</li>
+                    <li>注意：担当と工数を一覧で可視化し、週1などで偏りを見直す。抱え込みそうなときはメンターに早めに相談する。</li>
+                </ul>
+            </section>
+            <section class="section-block" aria-labelledby="sec-3">
+                <div class="section-head">
+                    <span class="section-num" aria-hidden="true">3</span>
+                    <h2 class="section-title" id="sec-3">プロジェクトの目的と結果の乖離</h2>
+                </div>
+                <ul class="section-list">
+                    <li>起きやすいこと：成果物や作業量が目的化し、当初の「誰にどんな価値を届けるか」から遠ざかる。</li>
+                    <li>注意：プロジェクト資料を定期的に見返し、メンバーと目的を確認し、遠ざかっていたら早めに修正する。</li>
+                </ul>
+            </section>
+        </div>
+    </div>
+</body>
+</html>

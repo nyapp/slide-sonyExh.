@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Elevator Pitch</title>
+    <link rel="stylesheet" href="slide-theme-tokens.css">
+    <style>
+        :root {
+            --eff-accent: #334155;
+            --eff-accent-border: #1e293b;
+            --eff-text-title: #334155;
+            --eff-text-body: #64748b;
+            --eff-bg-slide: #ffffff;
+            --ep-lede-size: 22px;
+            --ep-block-title: 13px;
+            --ep-block-body: 15px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background: var(--page-canvas-bg);
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--eff-bg-slide);
+            padding: 28px 36px 32px;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            box-shadow: var(--slide-shadow);
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid var(--eff-accent-border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--eff-accent);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .pitch-body {
+            width: 100%;
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+            margin-top: 28px;
+            gap: 20px;
+        }
+
+        .pitch-lede-wrap {
+            flex: 0 0 auto;
+            padding: 20px 22px 22px 20px;
+            border-left: 4px solid var(--eff-accent);
+            background: var(--color-bg-subtle);
+            border-radius: 0 8px 8px 0;
+        }
+
+        .pitch-label {
+            margin: 0 0 8px;
+            font-size: 12px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.08em;
+            text-transform: uppercase;
+            color: var(--eff-accent);
+        }
+
+        .pitch-lede {
+            margin: 0;
+            font-size: var(--ep-lede-size);
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            line-height: 1.55;
+        }
+
+        .pitch-grid {
+            flex: 1;
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+            grid-template-rows: minmax(0, 1fr) minmax(0, 1fr);
+            gap: 14px 16px;
+            min-height: 0;
+            min-width: 0;
+        }
+
+        .pitch-block {
+            background: #ffffff;
+            border: 1px solid var(--color-border);
+            border-radius: 8px;
+            padding: 14px 16px 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            min-width: 0;
+            min-height: 0;
+            overflow: hidden;
+        }
+
+        .pitch-block h2 {
+            margin: 0;
+            flex-shrink: 0;
+            font-size: var(--ep-block-title);
+            font-weight: var(--font-weight-bold);
+            letter-spacing: 0.04em;
+            color: var(--eff-accent);
+        }
+
+        .pitch-block p {
+            margin: 0;
+            flex: 1 1 auto;
+            min-width: 0;
+            min-height: 0;
+            overflow-x: hidden;
+            overflow-y: auto;
+            font-size: var(--ep-block-body);
+            font-weight: var(--font-weight-normal);
+            color: var(--eff-text-body);
+            line-height: 1.55;
+            overflow-wrap: break-word;
+            word-break: normal;
+        }
+
+        .pitch-block strong {
+            color: var(--eff-text-title);
+            font-weight: var(--font-weight-bold);
+        }
+    </style>
+</head>
+<body>
+
+<div class="slide" role="document" aria-label="エレベーターピッチ">
+    <div class="pill">Elevator Pitch</div>
+
+    <div class="pitch-body">
+        <div class="pitch-lede-wrap">
+            <p class="pitch-label" lang="en">One-liner</p>
+            <p class="pitch-lede">
+                <strong>ブライダルに関心のある若年層の女性</strong>を主な来場者像とした<strong>写真展示企画</strong>です。
+                ブライダル専門学校で学ぶ、<strong>ターゲットと同じ世代の学生</strong>が作品を通じて考える<strong>新しいブライダルの価値</strong>を、<strong>ソニーストア銀座</strong>の場で提示します。
+            </p>
+        </div>
+
+        <div class="pitch-grid" role="list">
+            <article class="pitch-block" role="listitem">
+                <h2>誰に</h2>
+                <p>中心は<strong>若年層の女性</strong>。結婚・ウェディングに関心があり、これからのライフイベントや表現に触れたい来場者。</p>
+            </article>
+            <article class="pitch-block" role="listitem">
+                <h2>課題</h2>
+                <p><strong>自分ごととしての結婚・ブライダル</strong>の解像度を上げたい。同世代の本音に近い視点が求められている。</p>
+            </article>
+            <article class="pitch-block" role="listitem">
+                <h2>提供価値</h2>
+                <p>専門学校で学んだ学生が描く<strong>次のブライダルの価値観</strong>を体験として届けることで来場者の<strong>共感と発見</strong>を生む。</p>
+            </article>
+            <article class="pitch-block" role="listitem">
+                <h2>差別化</h2>
+                <p><strong>教育現場からの創作</strong>という文脈。銀座のソニーストアという<strong>都市型・体験型の接点</strong>で、作品とメッセージをまとめて見せられる。</p>
+            </article>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>

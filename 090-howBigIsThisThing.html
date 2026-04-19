@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>How big is this thing?</title>
+    <link rel="stylesheet" href="slide-theme-tokens.css">
+    <style>
+        /**
+         * ガント風スライド（横軸＝月単位）
+         * - 見た目: 下記 :root
+         * - データ: SCHEDULE_CONFIG（segments はバー or 点）
+         */
+        :root {
+            --eff-accent: #334155;
+            --eff-accent-border: #1e293b;
+            --eff-text-title: #334155;
+            --eff-text-body: #64748b;
+            --eff-bg-slide: #ffffff;
+            --gantt-month-bar: #334155;
+            --gantt-month-bar-text: #ffffff;
+            --gantt-grid-border: #e2e8f0;
+            --gantt-header-bg: #f8fafc;
+            --gantt-label-text: #ffffff;
+            --gantt-bar-text: #ffffff;
+            --gantt-row-min-height: 44px;
+            --gantt-label-width: 132px;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            margin: 0;
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--page-canvas-bg);
+            font-family: var(--font-sans);
+        }
+
+        .slide {
+            width: var(--slide-width);
+            height: var(--slide-height);
+            background: var(--eff-bg-slide);
+            position: relative;
+            padding: 28px 36px 32px;
+            box-shadow: var(--slide-shadow);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            overflow: hidden;
+        }
+
+        .pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 20px;
+            border: 1px solid var(--eff-accent-border);
+            border-radius: 999px;
+            background: #ffffff;
+            color: var(--eff-accent);
+            font-size: 14px;
+            font-weight: var(--font-weight-semibold);
+            letter-spacing: 0.02em;
+            flex-shrink: 0;
+        }
+
+        .schedule-scroll {
+            flex: 1;
+            min-height: 0;
+            width: 100%;
+            margin-top: 28px;
+            overflow: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .schedule-inner {
+            min-width: 640px;
+            display: flex;
+            flex-direction: column;
+        }
+
+        /* 表示範囲の月の列数 */
+        .schedule-chart {
+            --months-count: 7;
+            display: flex;
+            flex-direction: column;
+            min-height: 0;
+        }
+
+        .schedule-chart .period-bar {
+            flex-shrink: 0;
+            background: var(--gantt-month-bar);
+            color: var(--gantt-month-bar-text);
+            font-size: 15px;
+            font-weight: var(--font-weight-bold);
+            text-align: center;
+            padding: 7px 12px;
+            border: 1px solid var(--gantt-grid-border);
+            border-bottom: none;
+        }
+
+        .schedule-chart .cal-header {
+            display: grid;
+            grid-template-columns: var(--gantt-label-width) 1fr;
+            flex-shrink: 0;
+            border: 1px solid var(--gantt-grid-border);
+            border-bottom: none;
+        }
+
+        .cal-header-spacer {
+            background: var(--gantt-header-bg);
+            border-right: 1px solid var(--gantt-grid-border);
+        }
+
+        .month-cells {
+            display: grid;
+            grid-template-columns: repeat(var(--months-count), 1fr);
+        }
+
+        .cal-cell {
+            text-align: center;
+            font-size: 12px;
+            font-weight: var(--font-weight-bold);
+            padding: 6px 4px;
+            border-right: 1px solid var(--gantt-grid-border);
+            color: var(--eff-text-title);
+        }
+
+        .cal-cell:last-child {
+            border-right: none;
+        }
+
+        .schedule-chart .gantt-body {
+            flex: 1;
+            min-height: 0;
+            display: flex;
+            flex-direction: column;
+            border: 1px solid var(--gantt-grid-border);
+        }
+
+        .schedule-chart .gantt-row {
+            flex: 1;
+            display: grid;
+            grid-template-columns: var(--gantt-label-width) 1fr;
+            min-height: var(--gantt-row-min-height);
+            border-bottom: 1px solid var(--gantt-grid-border);
+        }
+
+        .schedule-chart .gantt-body > .gantt-row:last-child,
+        .schedule-chart .gantt-body > .gantt-row-group:last-child {
+            border-bottom: none;
+        }
+
+        /* バー＋点で2レーンになるとき：ラベル1つを縦に結合して中央揃え */
+        .schedule-chart .gantt-row-group {
+            flex: 1;
+            display: grid;
+            grid-template-columns: var(--gantt-label-width) 1fr;
+            grid-template-rows: minmax(var(--gantt-row-min-height), auto) minmax(38px, auto);
+            border-bottom: 1px solid var(--gantt-grid-border);
+            min-height: 0;
+        }
+
+        /* stretch + .row-label の flex 中央で、2レーン分の高さの上下中央にテキスト */
+        .schedule-chart .gantt-row-group .row-label--split-span {
+            grid-column: 1;
+            grid-row: 1 / -1;
+            align-self: stretch;
+        }
+
+        .schedule-chart .gantt-row-sub {
+            grid-column: 2;
+            min-width: 0;
+        }
+
+        .schedule-chart .gantt-row-sub--bars {
+            grid-row: 1;
+        }
+
+        .schedule-chart .gantt-row-sub--points {
+            grid-row: 2;
+        }
+
+        .schedule-chart .row-label {
+            position: sticky;
+            left: 0;
+            z-index: 2;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 6px 8px;
+            font-size: 12px;
+            font-weight: var(--font-weight-bold);
+            color: var(--gantt-label-text);
+            text-align: center;
+            line-height: 1.25;
+            border-right: 1px solid var(--gantt-grid-border);
+            box-shadow: 4px 0 8px rgba(0, 0, 0, 0.06);
+        }
+
+        .schedule-chart .row-timeline {
+            position: relative;
+            min-width: 0;
+            min-height: 40px;
+        }
+
+        .schedule-chart .month-strip {
+            position: absolute;
+            inset: 0;
+            display: grid;
+            grid-template-columns: repeat(var(--months-count), 1fr);
+            z-index: 0;
+        }
+
+        .schedule-chart .month-strip .d {
+            border-right: 1px solid var(--gantt-grid-border);
+        }
+
+        .schedule-chart .month-strip .d:last-child {
+            border-right: none;
+        }
+
+        .schedule-chart .bars-layer {
+            position: absolute;
+            inset: 0;
+            z-index: 1;
+            display: grid;
+            grid-template-columns: repeat(var(--months-count), 1fr);
+            grid-template-rows: 1fr;
+            pointer-events: none;
+        }
+
+        .schedule-chart .gantt-bar-wrap {
+            display: flex;
+            align-items: center;
+            padding: 4px 0;
+            grid-row: 1;
+            grid-column: var(--gc-start) / var(--gc-end);
+            min-width: 0;
+            pointer-events: auto;
+        }
+
+        .schedule-chart .gantt-bar {
+            flex: 1;
+            min-width: 0;
+            height: calc(100% - 8px);
+            min-height: 26px;
+            display: flex;
+            align-items: center;
+            padding: 2px 8px 2px 10px;
+            font-size: 10px;
+            font-weight: var(--font-weight-bold);
+            color: var(--gantt-bar-text);
+            line-height: 1.2;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            border-radius: 2px 0 0 2px;
+            box-shadow: inset 0 -1px 0 rgba(0, 0, 0, 0.08);
+        }
+
+        .schedule-chart .gantt-bar.has-arrow {
+            padding-right: 2px;
+            border-radius: 2px 0 0 2px;
+        }
+
+        .schedule-chart .gantt-bar-arrow {
+            flex-shrink: 0;
+            width: 0;
+            height: 0;
+            border-style: solid;
+            border-width: 14px 0 14px 12px;
+            border-color: transparent transparent transparent currentColor;
+        }
+
+        /* 点（マイルストーン） */
+        .schedule-chart .gantt-point-wrap {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 2px 4px 3px;
+            grid-row: 1;
+            grid-column: var(--gc-start) / var(--gc-end);
+            min-width: 0;
+            z-index: 2;
+            pointer-events: auto;
+        }
+
+        .schedule-chart .gantt-point-dot {
+            width: 11px;
+            height: 11px;
+            border-radius: 50%;
+            border: 2px solid #ffffff;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.28);
+            flex-shrink: 0;
+        }
+
+        .schedule-chart .gantt-point-label {
+            margin-top: 3px;
+            font-size: 8px;
+            font-weight: var(--font-weight-bold);
+            color: var(--eff-text-title);
+            text-align: center;
+            line-height: 1.15;
+            max-width: 100%;
+            overflow: hidden;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+        }
+
+    </style>
+</head>
+<body>
+<div class="slide" role="document" aria-labelledby="slideTitle">
+    <div class="pill" id="slideTitle">【4〜10月】イベント／プロジェクト別スケジュール</div>
+    <div class="schedule-scroll" role="region" aria-label="月次スケジュール一覧">
+        <div class="schedule-inner" id="scheduleRoot"></div>
+    </div>
+</div>
+
+<script>
+(function () {
+    "use strict";
+
+    /**
+     * 横軸は「月」
+     *
+     * @typedef {Object} SegmentBar
+     * @property {'bar'} [kind='bar'] 期間バー（省略時もバー）
+     * @property {number} startMonth 開始月 1〜12
+     * @property {number} endMonth   終了月
+     * @property {string} text       ラベル
+     * @property {boolean} [arrowRight=true]
+     *
+     * @typedef {Object} SegmentPoint
+     * @property {'point'} kind      点（マイルストーン）
+     * @property {number} month      位置する月 1〜12
+     * @property {string} text       ドット下の短いラベル（省略可）
+     *
+     * @typedef {SegmentBar|SegmentPoint} Segment
+     *
+     * @typedef {Object} Row
+     * @property {string} rowLabel
+     * @property {string} labelBg
+     * @property {Segment[]} segments
+     * @property {string} [pointRowLabel] 未使用（ラベルは分割時も rowLabel を1つだけ表示）
+     */
+    const SCHEDULE_CONFIG = {
+        title: "How big is this thing?",
+        year: 2026,
+        firstMonth: 4,
+        lastMonth: 10,
+        rows: [
+            {
+                rowLabel: "企画制作",
+                labelBg: "#64748b",
+                segments: [
+                    { startMonth: 4, endMonth: 6, text: "展示会テーマ企画・制作", arrowRight: true },
+                    { kind: "point", month: 5, text: "ソニーストア銀座の来校" }
+                ]
+            },
+            {
+                rowLabel: "写真制作",
+                labelBg: "#475569",
+                segments: [
+                    { startMonth: 6, endMonth: 7, text: "写真作品制作", arrowRight: true },
+                    { kind: "point", month: 7, text: "作品データの入稿" },
+                ]
+            },
+            {
+                rowLabel: "展示制作",
+                labelBg: "#334155",
+                segments: [
+                    { startMonth: 7, endMonth: 9, text: "作品の配置・展示会運営の計画", arrowRight: true },
+                    { kind: "point", month: 8, text: "作品の納品確認" },
+                ]
+            },
+            {
+                rowLabel: "展示運営",
+                labelBg: "#1e293b",
+                segments: [
+                    { startMonth: 9, endMonth: 9, text: "ブライダルデイ", arrowRight: true },
+                    { startMonth: 10, endMonth: 10, text: "ソニーストア銀座", arrowRight: true },
+                    { kind: "point", month: 10, text: "トークイベント" }
+                ]
+            }
+        ]
+    };
+
+    function escapeHtml(s) {
+        return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;");
+    }
+
+    /** 属性値用（ツールチップ・aria） */
+    function escapeAttr(s) {
+        return String(s)
+            .replace(/&/g, "&amp;")
+            .replace(/"/g, "&quot;")
+            .replace(/</g, "&lt;")
+            .replace(/\r?\n/g, " ");
+    }
+
+    /**
+     * @param {object} cfg
+     * @returns {number[]}
+     */
+    function getMonthList(cfg) {
+        if (Number.isFinite(cfg.firstMonth) && Number.isFinite(cfg.lastMonth)) {
+            const list = [];
+            for (let m = cfg.firstMonth; m <= cfg.lastMonth; m++) {
+                list.push(m);
+            }
+            return list;
+        }
+        if (Number.isFinite(cfg.month)) {
+            return [cfg.month];
+        }
+        return [1];
+    }
+
+    /**
+     * @param {number} segMonth
+     * @param {number} rangeFirst
+     * @param {number} rangeLast
+     * @returns {number}
+     */
+    function clampMonth(segMonth, rangeFirst, rangeLast) {
+        return Math.max(rangeFirst, Math.min(rangeLast, segMonth));
+    }
+
+    function partitionSegments(segments) {
+        const bars = [];
+        const points = [];
+        for (let i = 0; i < segments.length; i++) {
+            const s = segments[i];
+            if (s.kind === "point") {
+                points.push(s);
+            } else {
+                bars.push(s);
+            }
+        }
+        return { bars: bars, points: points };
+    }
+
+    /**
+     * @param {object} row
+     * @param {object[]} segments
+     * @param {number} rangeFirst
+     * @param {number} rangeLast
+     * @returns {string}
+     */
+    function buildSegmentsHtml(row, segments, rangeFirst, rangeLast) {
+        let barsHtml = "";
+        for (let s = 0; s < segments.length; s++) {
+            const seg = segments[s];
+            const isPoint = seg.kind === "point";
+
+            if (isPoint) {
+                const pm = clampMonth(seg.month, rangeFirst, rangeLast);
+                const gcStart = pm - rangeFirst + 1;
+                const gcEnd = gcStart + 1;
+                const raw = seg.text != null ? String(seg.text) : "";
+                const tHtml = raw ? escapeHtml(raw) : "";
+                const tAttr = raw ? escapeAttr(raw) : "";
+                const labelHtml = tHtml
+                    ? `<span class="gantt-point-label">${tHtml}</span>`
+                    : "";
+                const a11y = tAttr ? tAttr : "マイルストーン";
+                const titleAttr = tAttr ? ` title="${tAttr}"` : "";
+                barsHtml += `
+                    <div class="gantt-point-wrap" style="--gc-start:${gcStart};--gc-end:${gcEnd}"${titleAttr}>
+                        <span class="gantt-point-dot" style="background-color:${row.labelBg}" role="img" aria-label="${escapeAttr(a11y)}"></span>
+                        ${labelHtml}
+                    </div>`;
+                continue;
+            }
+
+            const a = clampMonth(seg.startMonth, rangeFirst, rangeLast);
+            const b = clampMonth(seg.endMonth, rangeFirst, rangeLast);
+            const sm2 = Math.min(a, b);
+            const em2 = Math.max(a, b);
+            const gcStart = sm2 - rangeFirst + 1;
+            const gcEnd = em2 - rangeFirst + 2;
+            const arrow = seg.arrowRight !== false;
+            const barStyle = `background-color:${row.labelBg}`;
+            const arrowBlock = arrow
+                ? `<span class="gantt-bar-arrow" style="border-left-color:${row.labelBg}" aria-hidden="true"></span>`
+                : "";
+            barsHtml += `
+                    <div class="gantt-bar-wrap" style="--gc-start:${gcStart};--gc-end:${gcEnd}">
+                        <div class="gantt-bar${arrow ? " has-arrow" : ""}" style="${barStyle}">${escapeHtml(seg.text)}</div>
+                        ${arrowBlock}
+                    </div>`;
+        }
+        return barsHtml;
+    }
+
+    /**
+     * @param {object} cfg
+     * @returns {string}
+     */
+    function buildScheduleHtml(cfg) {
+        const y = cfg.year;
+        const months = getMonthList(cfg);
+        const n = months.length;
+        const rangeFirst = months[0];
+        const rangeLast = months[months.length - 1];
+
+        let monthHeaderHtml = "";
+        for (let i = 0; i < months.length; i++) {
+            monthHeaderHtml += `<div class="cal-cell">${months[i]}月</div>`;
+        }
+
+        let stripHtml = "";
+        for (let i = 0; i < n; i++) {
+            stripHtml += '<div class="d" aria-hidden="true"></div>';
+        }
+
+        let rowsHtml = "";
+        for (let r = 0; r < cfg.rows.length; r++) {
+            const row = cfg.rows[r];
+            const parts = partitionSegments(row.segments);
+            const split = parts.bars.length > 0 && parts.points.length > 0;
+
+            if (split) {
+                const barsHtmlTop = buildSegmentsHtml(row, parts.bars, rangeFirst, rangeLast);
+                const barsHtmlPt = buildSegmentsHtml(row, parts.points, rangeFirst, rangeLast);
+                const splitAria = escapeAttr(row.rowLabel + "（期間バーとマイルストーン）");
+                rowsHtml += `
+                <div class="gantt-row-group" aria-label="${splitAria}">
+                    <div class="row-label row-label--split-span" style="background:${row.labelBg}">${escapeHtml(row.rowLabel)}</div>
+                    <div class="gantt-row-sub gantt-row-sub--bars">
+                        <div class="row-timeline">
+                            <div class="month-strip">${stripHtml}</div>
+                            <div class="bars-layer">${barsHtmlTop}</div>
+                        </div>
+                    </div>
+                    <div class="gantt-row-sub gantt-row-sub--points">
+                        <div class="row-timeline">
+                            <div class="month-strip">${stripHtml}</div>
+                            <div class="bars-layer">${barsHtmlPt}</div>
+                        </div>
+                    </div>
+                </div>`;
+            } else {
+                const barsHtml = buildSegmentsHtml(row, row.segments, rangeFirst, rangeLast);
+                rowsHtml += `
+                <div class="gantt-row">
+                    <div class="row-label" style="background:${row.labelBg}">${escapeHtml(row.rowLabel)}</div>
+                    <div class="row-timeline">
+                        <div class="month-strip">${stripHtml}</div>
+                        <div class="bars-layer">${barsHtml}</div>
+                    </div>
+                </div>`;
+            }
+        }
+
+        const periodLabel = `${y}年 ${rangeFirst}月〜${rangeLast}月`;
+
+        return `
+            <div class="schedule-chart" style="--months-count:${n}">
+                <div class="period-bar">${escapeHtml(periodLabel)}</div>
+                <div class="cal-header">
+                    <div class="cal-header-spacer" aria-hidden="true"></div>
+                    <div class="month-cells">${monthHeaderHtml}</div>
+                </div>
+                <div class="gantt-body">${rowsHtml}</div>
+            </div>`;
+    }
+
+    function renderSchedule(cfg) {
+        const titleEl = document.getElementById("slideTitle");
+        const scheduleRoot = document.getElementById("scheduleRoot");
+
+        titleEl.textContent = cfg.title;
+        scheduleRoot.innerHTML = buildScheduleHtml(cfg);
+    }
+
+    renderSchedule(SCHEDULE_CONFIG);
+
+    window.renderMonthlyGanttSchedule = renderSchedule;
+})();
+</script>
+</body>
+</html>
