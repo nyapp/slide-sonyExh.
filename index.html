@@ -81,6 +81,18 @@
             font-size: 12px;
         }
 
+        .hud-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 12px;
+            color: rgba(255, 255, 255, 0.55);
+        }
+
+        .hud-status .is-on {
+            color: rgba(134, 239, 172, 0.95);
+        }
+
         .error-banner {
             position: fixed;
             top: 12px;
@@ -111,7 +123,12 @@
     </div>
     <div class="hud" aria-hidden="true">
         <span id="counter">— / —</span>
-        <span class="hud-muted"><kbd>→</kbd> <kbd>Space</kbd> 次 · <kbd>←</kbd> 前 · <kbd>Home</kbd> 先頭 · <kbd>End</kbd> 末尾 · <kbd>F</kbd> 全画面</span>
+        <span id="status" class="hud-status">
+            <span id="autoplayStatus">自動再生 OFF</span>
+            <span aria-hidden="true">·</span>
+            <span id="loopStatus">ループ OFF</span>
+        </span>
+        <span class="hud-muted"><kbd>→</kbd> <kbd>Space</kbd> 次 · <kbd>←</kbd> 前 · <kbd>A</kbd> 自動再生 · <kbd>L</kbd> ループ · <kbd>F</kbd> 全画面</span>
     </div>
 
     <!-- SLIDE_DECK_URLS:BEGIN -->
@@ -120,13 +137,13 @@
         "000-title.html",
         "010-whyAreWeHere.html",
         "020-elevatorPitch.html",
+        "025-image.html",
         "030-productBox.html",
         "040-solution.html",
         "045-threeStepsOfOurProject.html",
         "050-projectCommunity.html",
         "070-whatKeepsUsSleepless.html",
         "075-tradeOffSlider.html",
-        "080-theATeam.html",
         "090-howBigIsThisThing.html",
     ];
     </script>
@@ -135,13 +152,19 @@
         (function () {
             const SLIDE_W = 960;
             const SLIDE_H = 540;
+            const AUTOPLAY_INTERVAL_MS = 5000;
             const urls = Array.isArray(window.__SLIDE_DECK_URLS__) ? window.__SLIDE_DECK_URLS__ : [];
             const frame = document.getElementById("deckFrame");
             const frameWrap = document.getElementById("frameWrap");
             const counter = document.getElementById("counter");
+            const autoplayStatus = document.getElementById("autoplayStatus");
+            const loopStatus = document.getElementById("loopStatus");
             const errorEl = document.getElementById("error");
 
             let index = 0;
+            let autoplayEnabled = false;
+            let loopEnabled = false;
+            let autoplayTimer = null;
 
             function showError(msg) {
                 errorEl.textContent = msg;
@@ -170,18 +193,84 @@
                 counter.textContent = index + 1 + " / " + urls.length;
             }
 
-            function go(i) {
+            function updateStatusHud() {
+                autoplayStatus.textContent = autoplayEnabled
+                    ? "自動再生 ON (" + AUTOPLAY_INTERVAL_MS / 1000 + "s)"
+                    : "自動再生 OFF";
+                autoplayStatus.classList.toggle("is-on", autoplayEnabled);
+                loopStatus.textContent = loopEnabled ? "ループ ON" : "ループ OFF";
+                loopStatus.classList.toggle("is-on", loopEnabled);
+            }
+
+            function clearAutoplayTimer() {
+                if (autoplayTimer !== null) {
+                    clearTimeout(autoplayTimer);
+                    autoplayTimer = null;
+                }
+            }
+
+            function scheduleAutoplay() {
+                clearAutoplayTimer();
+                if (!autoplayEnabled) return;
+                autoplayTimer = setTimeout(function () {
+                    autoplayStep();
+                }, AUTOPLAY_INTERVAL_MS);
+            }
+
+            function go(i, options) {
+                const opts = options || {};
                 index = Math.max(0, Math.min(urls.length - 1, i));
                 frame.src = urls[index];
                 updateCounter();
+                if (!opts.skipAutoplayReset && autoplayEnabled) {
+                    scheduleAutoplay();
+                }
             }
 
             function next() {
-                if (index < urls.length - 1) go(index + 1);
+                if (index < urls.length - 1) {
+                    go(index + 1);
+                } else if (loopEnabled) {
+                    go(0);
+                }
             }
 
             function prev() {
-                if (index > 0) go(index - 1);
+                if (index > 0) {
+                    go(index - 1);
+                } else if (loopEnabled) {
+                    go(urls.length - 1);
+                }
+            }
+
+            function autoplayStep() {
+                if (index < urls.length - 1) {
+                    go(index + 1, { skipAutoplayReset: true });
+                    scheduleAutoplay();
+                    return;
+                }
+                if (loopEnabled) {
+                    go(0, { skipAutoplayReset: true });
+                    scheduleAutoplay();
+                    return;
+                }
+                autoplayEnabled = false;
+                updateStatusHud();
+            }
+
+            function toggleAutoplay() {
+                autoplayEnabled = !autoplayEnabled;
+                updateStatusHud();
+                if (autoplayEnabled) {
+                    scheduleAutoplay();
+                } else {
+                    clearAutoplayTimer();
+                }
+            }
+
+            function toggleLoop() {
+                loopEnabled = !loopEnabled;
+                updateStatusHud();
             }
 
             window.addEventListener("resize", applyScale);
@@ -216,6 +305,16 @@
                         e.preventDefault();
                         go(urls.length - 1);
                         break;
+                    case "a":
+                    case "A":
+                        e.preventDefault();
+                        toggleAutoplay();
+                        break;
+                    case "l":
+                    case "L":
+                        e.preventDefault();
+                        toggleLoop();
+                        break;
                     case "f":
                     case "F":
                         e.preventDefault();
@@ -230,7 +329,8 @@
                 }
             });
 
-            go(0);
+            updateStatusHud();
+            go(0, { skipAutoplayReset: true });
         })();
     </script>
 </body>

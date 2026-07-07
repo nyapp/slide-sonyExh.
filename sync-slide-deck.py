@@ -12,6 +12,8 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent
 PRESENT = ROOT / "index.html"
 SLIDE_NAME = re.compile(r"^\d{3}-.+\.html$")
+# デッキには載せずファイルだけ残すスライド
+DECK_EXCLUDE = frozenset({"080-theATeam.html"})
 MARKERS = re.compile(
     r"^[ \t]*<!-- SLIDE_DECK_URLS:BEGIN -->.*?^[ \t]*<!-- SLIDE_DECK_URLS:END -->",
     re.DOTALL | re.MULTILINE,
@@ -21,7 +23,7 @@ MARKERS = re.compile(
 def collect_slides() -> list[str]:
     names: list[str] = []
     for p in ROOT.iterdir():
-        if p.is_file() and SLIDE_NAME.match(p.name):
+        if p.is_file() and SLIDE_NAME.match(p.name) and p.name not in DECK_EXCLUDE:
             names.append(p.name)
     names.sort()
     return names
